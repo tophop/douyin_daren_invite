@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>抖音达人数据采集平台</title>
+    <link href="https://www.bootcss.com/p/layoutit/css/bootstrap-combined.min.css" rel="stylesheet">
+    <link href="https://www.bootcss.com/p/layoutit/css/layoutit.css" rel="stylesheet">
+    <link rel="stylesheet" href="../static/dist/zoomify.min.css">
+    <link rel="stylesheet" href="../static/css/style.css">
+
+
+</head>
+<body style="margin-left: 1% !important;">
+
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="tabbable" id="tabs-149570">
+                <ul class="nav nav-tabs">
+                    <li >
+                        <a href="#panel-491508" data-toggle="tab">未邀请达人</a>
+                    </li>
+                    <li class="active">
+                        <a href="#panel-755699" data-toggle="tab">邀请成功达人</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane  " id="panel-491508">
+                        <table class="table table-hover table-bordered align-content-center " contenteditable="true">
+                            <thead>
+                            <tr>
+                                <th>id</th>
+                                <th>头像</th>
+                                <th>抖音二维码</th>
+                                <th>名字</th>
+                                <th>抖音账号</th>
+                                <th>手机号</th>
+                                <th>微信</th>
+                                <th>粉丝数</th>
+                                <th>性别</th>
+                                <th>达人属性</th>
+                                <th>城市</th>
+                                <th>带货口碑</th>
+                                <th>直播转化率</th>
+                                <th>主推类目</th>
+                                <th>直播最低均场销售额</th>
+                                <th>直播最高均场销售额</th>
+                                <th>采集时间</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for i in uninvited %}
+                            <tr>
+                                {% for k,v in i.items() %}
+                                <td style="max-width: 200px;min-width: 50px;max-height: 110px;vertical-align: center !important;text-align: center" class="">
+                                {% if k=='avatar' %}
+                                   <img class="img img-rounded" style="padding: 0;margin: 0;max-width: 250px" src={{ v }} width="50px" height="50px" alt="">
+                                {% elif k=='share_url_douyin' %}
+                                    <img class="img img-rounded" style="padding: 0;margin: 0;max-width: 250px" src={{ v }} width="50px" height="50px" alt="">
+                                {% elif v=='[]' or v=='-1' or v=='0' %}
+                                未知
+                                    {% elif v is string and v.find('[')>-1 %}
+
+                                        {{ v|replace("[",'')|replace("]",'')|trim }}
+                                    {%  else %}
+                                    {{ v }}
+                                    {% endif %}
+
+                                </td>
+
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="tab-pane active" id="panel-755699">
+                        <table class="table table-hover table-bordered align-content-center " contenteditable="true">
+                            <thead>
+                            <tr>
+                                <th>id</th>
+                                <th>头像</th>
+                                <th>抖音二维码</th>
+                                <th>名字</th>
+                                <th>抖音账号</th>
+                                <th>手机号</th>
+                                <th>微信</th>
+                                <th>粉丝数</th>
+                                <th>性别</th>
+                                <th>达人属性</th>
+                                <th>城市</th>
+                                <th>带货口碑</th>
+                                <th>直播转化率</th>
+                                <th>主推类目</th>
+                                <th>直播最低均场销售额</th>
+                                <th>直播最高均场销售额</th>
+                                <th>采集时间</th>
+                                <th>邀请时间</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for i in invited %}
+                            <tr>
+                                {% for k,v in i.items() %}
+                                <td style="max-width: 200px;min-width: 40px;max-height: 80px" class="align-content-center">
+                                {% if k=='avatar' %}
+                                   <img class="img img-rounded" style="padding: 0;margin: 0;max-width: 250px" src={{ v }} width="50px" height="50px" alt="">
+                                {% elif k=='share_url_douyin' %}
+                                    <img class="img img-rounded" style="padding: 0;margin: 0;max-width: 250px" src={{ v }} width="50px" height="50px" alt="">
+                                {% elif v=='[]' or v=='-1' or v=='0' %}
+                                未知
+                                    {% elif v is string and v.find('[')>-1 %}
+
+                                        {{ v|replace("[",'')|replace("]",'')|trim }}
+
+                                    {% elif k=='create_time' %}
+
+                                        {{ v|replace(" 00:00:00",'')|trim }}
+                                    {%  else %}
+                                    {{ v }}
+                                    {% endif %}
+
+                                </td>
+
+                                {% endfor %}
+                            </tr>
+                            {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://www.bootcss.com/p/layoutit/js/jquery-2.0.0.min.js"></script>
+<script src="https://www.bootcss.com/p/layoutit/js/jquery.ui.touch-punch.min.js"></script>
+<script src="https://www.bootcss.com/p/layoutit/js/jquery-ui.js"></script>
+<script src="https://www.bootcss.com/p/layoutit/js/bootstrap.min.js"></script>
+<script src="{{ url_for('static',filename='dist/zoomify.min.js') }}"></script>
+<script type="text/javascript">
+    $('.img').zoomify();
+</script>
+</body>
+</html>
+

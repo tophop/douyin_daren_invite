@@ -1,0 +1,16 @@
+{
+  "map": {
+    "main_class": "主推类目",
+    "main_target": "关键指标",
+    "fans_data": "粉丝数据",
+    "author_data": "达人属性",
+    "other_config": "其他筛选",
+    "person_config": "个性筛选"
+  },
+  "main_class": {},
+  "other_config": {
+
+    "refresh": 0
+
+  }
+}

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>jQuery Lightbox图片放大预览代码</title>
+<link rel="stylesheet" href="static/css/bootstrap-grid.min.css">
+<link rel="stylesheet" href="static/dist/zoomify.min.css">
+<link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+<div class="container">		
+	<div class="examples">	
+		<div class="row">
+			<div class="example  col-md-12 col-xs-12 ">
+				<p><img src="static/img/1.jpg" class="img-rounded" alt=""></p>
+			</div>
+		</div>
+		<div class="row">
+			<div class="example  col-xs-6 col-md-6">
+				<p><img src="static/img/2.jpg" class="img-rounded" alt=""></p>
+			</div>
+			<div class="example col-xs-6 col-md-6">
+				<p><img src="static/img/3.jpg" class="img-rounded" alt=""></p>
+			</div>
+		</div>
+		<div class="row">
+			<div class="example col-xs-3 col-md-3">
+				<p><img src="static/img/4.jpg" class="img-rounded" alt=""></p>
+			</div>
+			<div class="example col-xs-3 col-md-3">
+				<p><img src="static/img/5.jpg" class="img-rounded" alt=""></p>
+			</div>
+			<div class="example col-xs-3 col-md-3">
+				<p><img src="static/img/6.jpg" class="img-rounded" alt=""></p>
+			</div>
+			<div class="example col-xs-3 col-md-3">
+				<p><img src="static/img/7.jpg" class="img-rounded" alt=""></p>
+			</div>
+		</div>
+	</div>	
+</div>
+<script src="http://www.jq22.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="static/dist/zoomify.min.js"></script>
+<script type="text/javascript">
+	$('.example img').zoomify();
+</script>
+
+</body>
+</html>
