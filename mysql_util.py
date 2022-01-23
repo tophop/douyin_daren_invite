@@ -12,11 +12,11 @@ class MysqlUtil:
     @classmethod
     def connect(cls):
         con = pymysql.connect(
-            host='',
+            host='1.14.108.208',
             port=3306,
             user='root',
-            password='',
-            db='',
+            password='2729b1b4d2743d2d',
+            db='daren',
             charset='utf8',
             cursorclass=pymysql.cursors.DictCursor
         )

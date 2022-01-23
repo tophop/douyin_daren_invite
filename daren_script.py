@@ -61,10 +61,10 @@ def start_dump():
         os.system("mitmdump -s daren_filter.py")
 
     t = threading.Thread(target=run_mitm)
-    # t.daemon=True
+    t.daemon = True
     print('start dump')
     t.start()
-
+    # run_mitm()
 
 def start_browser():
     browser_path = get_browser_path()
@@ -73,7 +73,7 @@ def start_browser():
     cmd = f'{browser_path} --proxy-server=127.0.0.1:8080 --ignore-certificate-errors'
     p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE)
-    print('started browser ')
+    print(cmd)
 
 
 def force_end_dump():
@@ -84,5 +84,5 @@ def force_end_dump():
 if __name__ == '__main__':
     setup_cert()
     force_end_dump()
+    # start_browser()
     start_dump()
-    start_browser()

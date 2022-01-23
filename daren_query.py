@@ -249,7 +249,7 @@ def invite_post(author_id):
     body = {
         "author_id": author_id,
         "discount": 9,
-        "cos_ratio": 8,
+        "cos_ratio": 20,
         "contact_phone": "18463583538",
         "contact_name": "李先生",
         "contact_wechat": "alaskgo",
@@ -258,9 +258,16 @@ def invite_post(author_id):
         "sample_back": "1",
         "promotions": json.dumps(
             [
-                {"institution_activity_id": 0, "promotion_id": "3525426319238253778", "custom_rate": 0},
-                {"institution_activity_id": 0, "promotion_id": '3520241344054432494', "custom_rate": 0},
-                {"institution_activity_id": 0, "promotion_id": '3525432432973193706', "custom_rate": 0},
+                {"institution_activity_id":0,"promotion_id":"3526831385576877968","custom_rate":0,"coop_desc":"短视频带货","no_audit_sample":2},
+
+                # {"institution_activity_id": 0, "promotion_id": "3525426319238253778", "custom_rate": 0},
+                # {"institution_activity_id": 0, "promotion_id": '3520241344054432494', "custom_rate": 0},
+                # {"institution_activity_id": 0, "promotion_id": '3525432432973193706', "custom_rate": 0},
+                # {"institution_activity_id": 0, "promotion_id": '3525438774492409248', "custom_rate": 0},
+                # {"institution_activity_id": 0, "promotion_id": '3525989509240067574', "custom_rate": 0},
+                # #
+                # {"institution_activity_id": 0, "promotion_id": '3520241344054432494', "coop_desc": "短视频带货", "custom_rate": 0},
+                # {"institution_activity_id": 0, "promotion_id": '3521678713278301346', "coop_desc": "短视频带货", "custom_rate": 0},
 
             ])
     }
@@ -340,15 +347,15 @@ def insert(author_list, connect, invited=True):
 
 
 if __name__ == '__main__':
-    # infos = get_invite_successed_authors_info(1,3)
+    infos = get_invite_successed_authors_info(1,3)
 
     get_product_list()
-    author_list = get_author_list(13, 15)
+    author_list = get_author_list(8,9)
     # filter_value support :{str format:[>,<,==,!=], list format:[not,in,not in,]}
     filter_not_list = ['票务', '品牌', '包', '文具', '玩具', '清仓', '年', '用品', '定制', '科技', '商贸', '公司', '工作室', '厂', '店', '商行',
-                       '百货', '育儿', '书', '培训', '商务', '橱窗', '号', '电商', '商', '集团', '市']
+                       '百货', '育儿', '书', '培训', '商务', '橱窗', '号', '电商', '商', '集团', '市','运动']
     # filter = {"convert_rate": {">": 60}, 'live_sale_low': {'>': 1}, 'nickname': {'not': filter_not_list}}
-    filter = {'promotion_sum': {'>': 2, '<': 200}, 'fans_sum': {'>': 1000},
+    filter = {'promotion_sum': {'<': 500}, 'fans_sum': {'>': 1000},
               'nickname': {'not': filter_not_list}}
 
     author_list_filterd = author_list_filter(filter, author_list)
@@ -357,8 +364,17 @@ if __name__ == '__main__':
 
     # insert(infos, my, invited=True)
     # insert(author_list_filterd,my,invited=False)
+    #
+    count=0
+    for i in author_list_filterd:
+        uid = i.get('uid')
+        time.sleep(1)
+        code=invite_post(uid)
 
-    # for i in author_list_filterd:
-    #     uid = i.get('uid')
-    #     time.sleep(1)
-    #     invite_post(uid)
+        if json.loads(code).get('code')==0:
+            count+=1
+        else:
+            print(f"total: {len(author_list_filterd)}, invited: {count}")
+        if "今日邀约数量已达上限" in json.loads(code).get('msg'):
+            break
+    print(f"total: {len(author_list_filterd)}, invited: {count}")
