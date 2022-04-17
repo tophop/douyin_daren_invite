@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 import datetime
 from typing import Optional, List, Union, Dict
 
@@ -187,15 +188,14 @@ def author_list_filter(filter, author_list):
     """
     return_author_list = []
     for author_dict in author_list:
-        all_dicts = [i for i in author_dict.values()]
-        all_dict={}
-        for info in all_dicts:
-            all_dict.update(info)
         flag = 0
         for filter_key, filter_content in filter.items():
-            # for all_dict in list(author_dict.values()):
-            if all_dict.get(filter_key) is not None:
-                actual_value = all_dict.get(filter_key)
+            for all_dict in list(author_dict.values()):
+                if all_dict.get(filter_key):
+                    actual_value = all_dict.get(filter_key)
+                    break
+            # if not actual_value:
+            #     continue
             filter_condition, filter_value = (list(filter_content.items())[0])
             if filter_condition in ['>', '<', '!=', '==']:
                 # filter_value is str
@@ -243,7 +243,7 @@ def invite_post(author_id):
     desc: 邀请语
     promotion_sort_type: 1
     sample_back: 1
-    promotions: [{"institution_activity_id": 0, "2": "需要填写promotion_id", "custom_rate": 0}]
+    promotions: [{"institution_activity_id": 0, "promotion_id": "需要填写promotion_id", "custom_rate": 0}]
 """
     url_info_dict = parse_josn()
     _signature = url_info_dict.get("signature")
@@ -263,18 +263,26 @@ def invite_post(author_id):
     body = {
         "author_id": author_id,
         "discount": 9,
-        "cos_ratio": 45,
+        "cos_ratio": 20,
         "contact_phone": "18463583538",
-        "contact_name": "老李",
+        "contact_name": "李先生",
         "contact_wechat": "alaskgo",
-        "desc": "您好，我们这有几款产品特别适合您，可以免费申样，挂车提供免费抖加投放，品质保障售后无忧，低价高佣，您看可以帮忙带下吗",
+        "desc": "挂车提供免费抖加投放，品质保障售后无忧，低价高佣",
         "promotion_sort_type": "1",
         "sample_back": "1",
-        "promotions": json.dumps([
-                {"institution_activity_id":0,"promotion_id":"3539314452639959103","is_trusteeship":True,"custom_rate":0,"coop_desc":"","no_audit_sample":2},
-                {"institution_activity_id":0,"promotion_id":"3540277871778072291","is_trusteeship":True,"custom_rate":0,"coop_desc":"","no_audit_sample":2}
-                ,{"institution_activity_id":0,"promotion_id":"3539540732991956076","is_trusteeship":True,"custom_rate":0,"coop_desc":"","no_audit_sample":2},
-                {"institution_activity_id": 0, "promotion_id": '3520241344054432494',"is_trusteeship":True,"custom_rate":0,"coop_desc":"","no_audit_sample":2}
+        "promotions": json.dumps(
+            [
+                # {"institution_activity_id":0,"promotion_id":"3526831385576877968","custom_rate":0,"coop_desc":"短视频带货","no_audit_sample":2},
+
+                # {"institution_activity_id": 0, "promotion_id": "3525426319238253778", "custom_rate": 0},
+                # {"institution_activity_id": 0, "promotion_id": '3520241344054432494', "custom_rate": 0},
+                # {"institution_activity_id": 0, "promotion_id": '3525432432973193706', "custom_rate": 0},
+                # {"institution_activity_id": 0, "promotion_id": '3525438774492409248', "custom_rate": 0},
+                # {"institution_activity_id": 0, "promotion_id": '3525989509240067574', "custom_rate": 0},
+                # #
+                {"institution_activity_id":0,"promotion_id":"3520241344054432494","is_trusteeship":True,"custom_rate":0,"coop_desc":"","no_audit_sample":2}
+                ,{"institution_activity_id":0,"promotion_id":"3532477465958180125","is_trusteeship":True,"custom_rate":0,"coop_desc":"","no_audit_sample":2}
+                # {"institution_activity_id": 0, "promotion_id": '3521678713278301346', "coop_desc": "短视频带货", "custom_rate": 0},
 
             ])
     }
@@ -350,37 +358,44 @@ def insert(author_list, connect, invited=True):
             connect.insert_invited_author_data(connect.connect(), **author_dict)
         else:
             connect.insert_author_data(connect.connect(), **author_dict)
+import re
+def get_pdd_order(pages):
+    url_info_dict = parse_josn()
+    headers = url_info_dict.get('pdd_headers')
+    url = url_info_dict.get('pdd_order_url')
+    headers.update({"Cookie": url_info_dict.get("pdd_cookies")})
+    for page in pages:
+        offset=0
+        param = {
 
+                "offset": 0,
+                "origin_host_name": "mobile.yangkeduo.com",
+                "page": 1,
+                "page_from": 1,
+                "size": 20,
+                "type": "unreceived"
 
+        }
+
+        res = requests.post(url, data=param, headers=headers)
+        order_sn=[i.get('order_sn') for i in json.loads(res.text).get('orders')]
+        offset = order_sn[-1]
+        detail_url='https://mobile.yangkeduo.com/order.html?order_sn=%s'
+        pdd_detail_headers = url_info_dict.get('pdd_detail_headers')
+        # url = url_info_dict.get('pdd_order_url')
+        pdd_detail_headers.update({"Cookie": url_info_dict.get("pdd_detail_cookies")})
+        for sn in order_sn:
+
+            try:
+                new_url=detail_url%sn
+                detail_page_res = requests.get(new_url, headers=pdd_detail_headers).text
+                address=re.findall('<div class="_3GeQUL0R _3D2XMwAz" role="link" aria-label="(.*?)>',detail_page_res,re.S)[0]
+                name=re.findall('class="Be3oUxVQ">(.*?)<',detail_page_res,re.S)[0]
+                status=re.findall('<p class="x86glo_R" aria-hidden="true">(.*?)</p>',detail_page_res,re.S)[0]
+                deliver_num=re.findall('"快递单号： (.*?) "',detail_page_res,re.S)
+                order_sn=re.findall('"订单编号： (.*?) "',detail_page_res,re.S)
+                print(name,status, order_sn,deliver_num,address,)
+            except:
+                print(sn)
 if __name__ == '__main__':
-    # infos = get_invite_successed_authors_info(1, 3)
-
-    # get_product_list()
-    author_list = get_author_list(1, 15)
-    # filter_value support :{str format:[>,<,==,!=], list format:[not,in,not in,]}
-    filter_not_list = ['票务', '品牌', '包', '文具', '玩具', '清仓', '年', '用品', '定制', '科技', '贸易','商贸', '学院','公司', '工作室','传媒', '食','部','厂', '店', '商行',
-                       '百货', '育儿', '书', '培训', '商务',  '号', '电商', '商', '集团', '市', '运动', '特产','植物','农业','酒店','管理','课堂']
-    # filter = {"convert_rate": {">": 60}, 'live_sale_low': {'>': 1}, 'nickname': {'not': filter_not_list}}
-    filter = {'fans_num': {'>': 1000},"invitation_status":{"!=":2},
-              'nickname': {'not': filter_not_list}}
-
-    author_list_filterd = author_list_filter(filter, author_list)
-    # author_list_filterd = infos
-    my = MysqlUtil()
-
-    # insert(infos, my, invited=True)
-    # insert(author_list_filterd,my,invited=False)
-    #
-    count = 0
-    for i in author_list_filterd:
-        uid = i.get('author_base').get('uid')
-        time.sleep(1)
-        code = invite_post(uid)
-
-        if json.loads(code).get('code') == 0:
-            count += 1
-        else:
-            print(f"total: {len(author_list_filterd)}, invited: {count}")
-        if "今日邀约数量已达上限" in json.loads(code).get('msg'):
-            break
-    print(f"total: {len(author_list_filterd)}, invited: {count}")
+    get_pdd_order([1,1])

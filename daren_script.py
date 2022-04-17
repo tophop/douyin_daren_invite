@@ -84,5 +84,5 @@ def force_end_dump():
 if __name__ == '__main__':
     setup_cert()
     force_end_dump()
-    # start_browser()
+    start_browser()
     start_dump()
